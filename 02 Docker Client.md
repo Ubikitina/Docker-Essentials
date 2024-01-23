@@ -234,3 +234,27 @@ Loads images from a tar file. The --input or -i option is used to specify the na
 ```bash
 $ docker load -i <filename.tar>
 ```
+
+### docker build in detail
+Build an image from a Dockerfile and a context. The context for the build command is a set of files located in the specified path or URL.
+
+```
+$ docker build [options] <dockerfile_path>|<url>
+```
+
+When the URL points to a Git repository, the repository serves as the context for the build command. In the following example, the snippet indicates the container branch and the docker folder as the context.
+```
+$ docker build https://github.com/docker/rootfs.git#container:docker
+```
+Additionally, you can tag images and assign values to arguments during the build process.
+
+To build an image with one or more tags, use the -t or --tag option.
+```
+$ docker build -t repo1/micro1:v1 -t repo2/micro1:v1 .
+```
+
+To assign values to arguments, use the --build-arg option.
+
+```
+$ docker build --build-arg DEST_FOLDER=my_folder.
+```
