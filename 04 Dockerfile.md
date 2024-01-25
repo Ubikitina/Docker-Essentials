@@ -1,5 +1,26 @@
 # Dockerfile
 
+- [Dockerfile](#dockerfile)
+  - [What is Dockerfile?](#what-is-dockerfile)
+  - [Dockerfile Commands:](#dockerfile-commands)
+  - [Environment variables](#environment-variables)
+    - [ARG example:](#arg-example)
+    - [ENV example:](#env-example)
+  - [Dockerfile Examples](#dockerfile-examples)
+    - [Example 1 - Minimum Dockerfile example](#example-1---minimum-dockerfile-example)
+    - [Example 2 - Git](#example-2---git)
+    - [Example 3 - Copy](#example-3---copy)
+    - [Example 4 - Entrypoint](#example-4---entrypoint)
+    - [Example 5 - Workdir](#example-5---workdir)
+    - [Example 6 - Python](#example-6---python)
+    - [Example 7 - Args](#example-7---args)
+    - [Example 8 - Entrypoint and cmd](#example-8---entrypoint-and-cmd)
+    - [Example 9 - Entrypoint, cmd, push and pull](#example-9---entrypoint-cmd-push-and-pull)
+    - [Example 10 - Others](#example-10---others)
+  - [Docker multistage](#docker-multistage)
+    - [Example - Multistage](#example---multistage)
+
+
 ## What is Dockerfile?
 It is a text file that describes the steps to create a Docker image from a base image, upon which changes are made.
 

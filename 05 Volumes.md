@@ -1,4 +1,14 @@
 # Volumes
+Table of contents:
+- [Volumes](#volumes)
+  - [Managing File Persistence in Docker](#managing-file-persistence-in-docker)
+  - [Volumes in detail](#volumes-in-detail)
+  - [Volume management using the Docker Client](#volume-management-using-the-docker-client)
+    - [Create a volume](#create-a-volume)
+    - [List volumes](#list-volumes)
+    - [See details of a volume](#see-details-of-a-volume)
+    - [Delete a volume](#delete-a-volume)
+    - [Example](#example)
 
 ## Managing File Persistence in Docker
 By default, any files created within a container are stored in a write layer, and this data is not retained when the container stops running.

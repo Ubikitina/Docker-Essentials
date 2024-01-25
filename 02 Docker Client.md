@@ -1,6 +1,26 @@
 # Docker Client
 Next we will see the most used lifecycles and commands in Docker.
 
+Table of contents:
+- [Docker Client](#docker-client)
+  - [Container life cycle](#container-life-cycle)
+  - [Image lifecycle](#image-lifecycle)
+  - [Main commands](#main-commands)
+    - [--help](#--help)
+    - [docker tag](#docker-tag)
+    - [docker pull](#docker-pull)
+    - [docker images](#docker-images)
+    - [docker push](#docker-push)
+    - [docker run](#docker-run)
+    - [docker commit](#docker-commit)
+    - [docker inspect](#docker-inspect)
+    - [docker rmi](#docker-rmi)
+    - [docker rm](#docker-rm)
+    - [docker ps](#docker-ps)
+    - [Save and restore containers or images](#save-and-restore-containers-or-images)
+    - [docker build](#docker-build)
+
+
 ## Container life cycle
 This is the simplified life cycle, pointing out the most relevant states and commands as a starting point:
 ![Container life cycle](./images/docker-container-lifecycle-1024x584.jpg)
@@ -15,7 +35,7 @@ Please not that a container can also be killed, by using kill command.
 
 
 
-## Image workflow
+## Image lifecycle
 ![Image workflow](./images/image%20workflow.png)
 
 ## Main commands
@@ -33,14 +53,14 @@ Please not that a container can also be killed, by using kill command.
 | docker rmi     | Deletes an image.                               |
 | docker tag     | Creates a tag for an image.                     |
 
-### --help command
+### --help
 Review the options of the any of the above commands by using --help:
 ```bash
 $ docker images --help
 ```
 
 
-### docker tag in detail
+### docker tag
 For the purpose of this tutorial, the name of an image is composed of:
 
 `image_name = [registry_host:[port]/][registry_name/]repository_name[:tag]`
@@ -59,7 +79,7 @@ The name of a tag should contain valid ASCII characters, which can be lowercase 
 
 
 
-### docker pull in detail
+### docker pull
 Download an image or repository from a registry:
 ```bash
 $ docker pull <image_name>
@@ -72,7 +92,7 @@ docker pull alpine:3.19.0
 
 To download all versions of an image, use the --all-tags or -a option.
 
-### docker images in detail
+### docker images
 
 To list all images (including intermediate ones), use the --all or -a parameter:
 ```bash
@@ -96,7 +116,7 @@ Format the output of the docker images command:
 $ docker images --format "{{.ID}}: {{.Repository}}"
 ```
 
-### docker push in detail
+### docker push
 Push an image or repository to a registry
 
 ```bash
@@ -115,7 +135,7 @@ Push all images from a repository with the --all-tags or -a option:
 $ docker push --all-tags <repository_name>
 ```
 
-### docker run in detail
+### docker run
 Create a new writable layer in the container image and start it using the specified command.
 ```bash
 $ docker run [options] <image_name> [command] [args]
@@ -135,7 +155,7 @@ Among the most common options are:
 $ docker run --name test -it alpine:3.7
 ```
 
-### docker commit in detail
+### docker commit
 Create a new image from the changes made in a container.
 ```bash
 $ docker commit [options] <container> [repository:[tag]]
@@ -154,7 +174,7 @@ $ docker inspect -f "{{ .Config.Env }}" <new_container_id>
 ```
 Example 2 inspects the Environment Variables of the original container. It retrieves and displays the environment variables. Then, it creates a new Docker image based on the changes made to the specified container. In this case, it adds a new environment variable DEBUG=true. Finally, it inspects and displays the environment variables of the newly created container from the new image, to ensure that they are the same as the original container.
 
-### docker inspect in detail
+### docker inspect
 Provides detailed information about an object built by Docker.
 ```bash
 $ docker inspect [options] <container> [container…]
@@ -175,7 +195,7 @@ $ docker inspect size database --format '{{ .SizeRw }}'
 Note: The provided examples demonstrate inspecting the size of a container and retrieving specific size-related information.
 
 
-### docker rmi in detail
+### docker rmi
 Deletes one or more images using their ID (short or long), tag, or digest. If an image has more than one tag referencing it, all tags must be removed before the image itself can be deleted.
 ```bash
 $ docker rmi <repository_name>:<image_tag>|<image_id>|<digest>
@@ -188,7 +208,7 @@ $ docker rmi <repository_name>:<image_tag>|<image_id>|<digest>
 $ docker rmi -f <image_id>
 ```
 
-### docker rm in detail
+### docker rm
 Deletes one or more containers using their ID (short or long) or their name.
 ```bash
 $ docker rm <container_id>|<container_name>
@@ -199,7 +219,7 @@ With the -f option, if the ID (short or long) is specified, all containers are f
 $ docker rm -f <container_id>|<container_name>
 ```
 
-### docker ps in detail
+### docker ps
 Lists containers, by default only those that are currently running. With the -a or --all option, it lists all containers.
 ```bash
 $ docker ps --all
@@ -235,7 +255,7 @@ Loads images from a tar file. The --input or -i option is used to specify the na
 $ docker load -i <filename.tar>
 ```
 
-### docker build in detail
+### docker build
 Build an image from a Dockerfile and a context. The context for the build command is a set of files located in the specified path or URL.
 
 ```

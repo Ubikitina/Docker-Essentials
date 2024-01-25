@@ -1,4 +1,27 @@
 # Docker Client Advanced Concepts
+Table of contents:
+- [Docker Client Advanced Concepts](#docker-client-advanced-concepts)
+  - [Configure resource limits](#configure-resource-limits)
+    - [Restricting Memory Usage in Docker](#restricting-memory-usage-in-docker)
+    - [Memory Reservation in Docker](#memory-reservation-in-docker)
+    - [Checking Resource Usage](#checking-resource-usage)
+    - [Restricting CPU Usage in Docker](#restricting-cpu-usage-in-docker)
+    - [Prioritizing CPU Usage in Docker](#prioritizing-cpu-usage-in-docker)
+  - [Networks](#networks)
+    - [Basic concepts](#basic-concepts)
+    - [Container Network Model](#container-network-model)
+      - [Network Sandbox](#network-sandbox)
+      - [Endpoints](#endpoints)
+      - [Docker Engine](#docker-engine)
+    - [Controllers](#controllers)
+      - [Bridge](#bridge)
+      - [Host](#host)
+      - [None](#none)
+      - [Overlay](#overlay)
+      - [Macvlan](#macvlan)
+    - [Basic network commands](#basic-network-commands)
+  - [Labels](#labels)
+
 ## Configure resource limits
 ### Restricting Memory Usage in Docker
 To limit the amount of memory (hard limit), we use the `-m` or `--memory` parameter.
@@ -70,6 +93,8 @@ Docker networks empower users to connect containers to specified networks, ensur
 
 #### None
 - With this driver, containers have no access to external networks and cannot communicate with other containers.
+
+![Docker Networking](./images/Network%20controllers.png)
 
 #### Overlay
 - Used to create internal private networks within Docker nodes in a Docker Swarm cluster.
