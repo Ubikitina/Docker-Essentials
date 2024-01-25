@@ -3,7 +3,7 @@ Next we will see the most used lifecycles and commands in Docker.
 
 ## Container life cycle
 This is the simplified life cycle, pointing out the most relevant states and commands as a starting point:
-![Container life cycle](./docker-container-lifecycle-1024x584.jpg)
+![Container life cycle](./images/docker-container-lifecycle-1024x584.jpg)
 
 - Created: a Docker container is created from a Docker image.
 - Running: the Docker container starts. This status can also be reached by using run command. This command creates the container if it is not present.
@@ -16,7 +16,7 @@ Please not that a container can also be killed, by using kill command.
 
 
 ## Image workflow
-![Image workflow](./image%20workflow.png)
+![Image workflow](./images/image%20workflow.png)
 
 ## Main commands
 | Docker Command | Description                                     |

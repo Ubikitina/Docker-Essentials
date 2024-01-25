@@ -15,7 +15,7 @@
     - Provisioning of servers.
     - A virtual machine image contains the operating system, libraries, and applications, so it typically occupies a significant amount of space.
 
-![Containers vs Virtual Machines](./containers-vs-virtual-machines.jpg)
+![Containers vs Virtual Machines](./images/containers-vs-virtual-machines.jpg)
 
 
 - **Open Container Initiative (OCI)**: Docker and other key players in the container industry established the Open Container Initiative (OCI) in 2015. The OCI's goal is to create standards for container formats and runtimes. Currently, the OCI has three main specifications:
@@ -51,5 +51,5 @@
     - Podman's ability to manage multiple containers "out-of-the-box" using pod-level commands sets it apart. Compared to Docker technology, Conmon consumes less memory. To create a pod, it is necessary to create a manifest file using the declarative format and YAML data serialization language. Kubernetes consumes these manifests for its container orchestration framework.
     - Podman inherited the Docker CLI, simplifying the transition from Docker to Podman. Some Linux distributions even include a package called podman-docker, which creates a docker alias to Podman.
 
-![Most popular containerization technologies](./Container%20Engines%20Orchestrators.png)
+![Most popular containerization technologies](./images/Container%20Engines%20Orchestrators.png)
 

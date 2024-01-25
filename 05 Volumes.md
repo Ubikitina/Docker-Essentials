@@ -21,7 +21,7 @@ Volumes are the preferred mechanism for persisting data generated and used by Do
 - Volumes do not increase the size of the container images.
 
 
-![Docker Volume](./Docker%20Volume.png)
+![Docker Volume](./images/Docker%20Volume.png)
 
 ## Volume management using the Docker Client
 ### Create a volume

@@ -29,7 +29,7 @@ The `.dockerignore` file is used to exclude files and directories from the conte
 | ARG             | Defines arguments within the Dockerfile that are available during the image build. However, the running container cannot access these values. If multiple ARGs are defined (without a default value) but not specified in the build command, an error message will be triggered. |
 | ENV             | Defines environment variables that are available during the image build from the moment they are defined. Unlike ARG, the running container can access these values.                                   |
 
-![ARG vs ENV](./docker_environment_build_args.png)
+![ARG vs ENV](./images/docker_environment_build_args.png)
 
 ### ARG example:
 ```bash
@@ -241,7 +241,7 @@ Why Docker multistage builds are useful:
 - Easier maintenance
 
 Example:
-![Multistage builds](./docker-multi-stage-builds.jpg)
+![Multistage builds](./images/docker-multi-stage-builds.jpg)
 
 ### Example - Multistage
 This example combines several steps for the compilation of the source code to the final binaries that will be deployed in production.
