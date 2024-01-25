@@ -229,3 +229,54 @@ Build, with the tag workdir:v3 adapting the Dockerfile so that the value of the 
 
 Run with the pwd command to display the current directory.
 
+
+## Docker multistage 
+Docker multistage builds are a feature in Docker that allows you to use **multiple FROM statements** in a single Dockerfile. Each FROM statement defines a new build stage, and each stage can have its own set of instructions. The purpose of multistage builds is to create more efficient and smaller Docker images.
+
+Why Docker multistage builds are useful:
+- Reduced image size
+- Clean separation of build and runtime Environments
+- Improved build speed
+- Simplified build scripts
+- Easier maintenance
+
+Example:
+![Multistage builds](./docker-multi-stage-builds.jpg)
+
+### Example - Multistage
+This example combines several steps for the compilation of the source code to the final binaries that will be deployed in production.
+```dockerfile
+# Stage 1: Base Image for Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 5080
+EXPOSE 5443
+ENV ASPNETCORE_URLS=http://+:5080
+# Create a non-root user for security purposes
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+# Stage 2: Build Image
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+# Copy and restore dependencies
+COPY ["TodoApi.csproj", "./"]
+RUN dotnet restore "TodoApi.csproj"
+# Copy the entire project and build
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
+
+# Stage 3: Publish Image
+FROM build AS publish
+# Publish the application
+RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Stage 4: Final Image for Deployment
+FROM base AS final
+WORKDIR /app
+# Copy the published files from the 'publish' stage
+COPY --from=publish /app/publish .
+# Set the entry point for the container
+ENTRYPOINT ["dotnet", "TodoApi.dll"]
+```
