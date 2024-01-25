@@ -74,3 +74,158 @@ $ docker build -t hello .
 $ docker run --rm hello
 ```
 
+### Example 2 - Git
+Creates an image with Git.
+```Dockerfile
+FROM alpine:3.1 9 0
+RUN apk update
+RUN apk add git
+```
+
+Build with the app_git:v1 tag, run, enter and verify the existence of the file.
+```bash
+$ docker run --rm app_git:v1 ls
+```
+
+### Example 3 - Copy
+Create an image with a file in its structure.
+```Dockerfile
+FROM alpine:3.1 9 0
+RUN apk update
+ADD http://www.vlsitechnology.org/pharosc_8.4.tar.gz .
+```
+
+### Example 4 - Entrypoint
+Create an index.html file with the content "Welcome to the test lab".
+
+Create a dockerfile with the following content:
+```Dockerfile
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+```
+
+Build with the app_copy:v1 tag, execute and navigate to the html page:
+```bash
+$ docker run --rm -d -p 80:80 app_copy:v1
+```
+
+### Example 5 - Workdir
+Dockerfile:
+```Dockerfile
+FROM alpine:3.17.1
+WORKDIR /opt
+RUN echo "Welcome to Docker Labs" > opt.txt
+WORKDIR folder1
+RUN echo "Welcome to Docker Labs" > folder1.txt
+WORKDIR folder2
+RUN echo "Welcome to Docker Labs" > folder2.txt
+```
+
+Build the image with the app_workdir:v1 tag. Execute with the pwd command:
+```bash
+$ docker run --rm app_workdir:v1 pwd
+```
+
+### Example 6 - Python
+Create a file named hello.py with the following content:
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "welcome to Dockerlabs!! successfully done!!"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+Create dockerfile:
+```Dockerfile
+FROM python:3.5
+RUN apt-getupdate
+RUN pipinstallFlask
+ADD . /opt/webapp/
+WORKDIR /opt/webapp
+ENV FLASK_APP=hello.py
+EXPOSE 5000
+CMD ["flask", "run", "--host=0.0.0.0"]
+```
+
+Build the image with the app_python:v1 tag. Then execute the image specifying the port.
+```bash
+$ docker build t app_python:v1 .
+$ docker run rm p 5000:5000 d app_python:v1
+```
+
+Open URL http://localhost:5000/ to see the web up and running.
+
+### Example 7 - Args
+Create dockerfile:
+```Dockerfile
+FROM alpine:3.17.1
+ARG A_USER=amigo
+RUN echo "Bienvenido $A_USER al mundo de Docker!" > message.txt
+CMD cat message.txt
+```
+
+Build the image with the app_args:v1 tag and execute.
+
+Build the image with the app_args:v2 tag passing "Ed" as value in the A_USER argument.
+```bash
+$ docker build -t app_args:v2 --build-arg A_USER=Ed .
+```
+
+Execute the image.
+
+### Example 8 - Entrypoint and cmd
+Create a Dockerfile with the following content, build the image with the name app_entry:v1, run and view the output.
+```Dockerfile
+FROM alpine:3.1 9.0
+ENTRYPOINT ["echo", "Hola"]
+CMD ["Command Exec"]
+```
+Delete the container created in the previous line and execute the following line.
+```bash
+$ docker run --rm app_entry:v1 Mundo
+```
+
+Add the following line to the dockerfile, rebuild the image, run and see the output.
+```Dockerfile
+CMD "Command shell"
+```
+
+
+### Example 9 - Entrypoint, cmd, push and pull
+Create a Dockerfile with the following content, build the image, run and view the output.
+```Dockerfile
+FROM alpine:3.1 9.0
+ENTRYPOINT ["echo","Hola, soy Juan, te doy la bienvenida"]
+CMD ["amigo"]
+```
+
+Upload the image to a repository in a Docker Hub account.
+
+Download a peer image from Docker Hub and run the image by passing its name as a parameter.
+
+In the above Dockerfile, modify the ENTRYPOINT statement by CMD passing its name as the value of the E_USER environment variable, generate the image again and check the output.
+
+### Example 10 - Others
+Create a Dockerfile with the following content:
+```Dockerfile
+FROM alpine:3.17.1
+ENV DIRPATH /myfolder
+WORKDIR $DIRPATH
+```
+
+Build, with the tag workdir:v2.
+
+Execute with the pwd command.
+
+Build, with the tag workdir:v3 adapting the Dockerfile so that the value of the DIRPATH variable can also get the value from an argument.
+
+Run with the pwd command to display the current directory.
+
