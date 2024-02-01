@@ -228,11 +228,27 @@ ENTRYPOINT ["echo","Hola, soy Juan, te doy la bienvenida"]
 CMD ["amigo"]
 ```
 
+```bash
+$ docker build -t my-greeting-app .
+$ docker run my-greeting-app:latest
+```
+
 Upload the image to a repository in a Docker Hub account.
+```bash
+$ docker tag my-greeting-app my-docker-hub-user/greeting-app:latest
+$ docker push my-docker-hub-user/greeting-app:latest
+```
 
 Download a peer image from Docker Hub and run the image by passing its name as a parameter.
 
-In the above Dockerfile, modify the ENTRYPOINT statement by CMD passing its name as the value of the E_USER environment variable, generate the image again and check the output.
+In the above Dockerfile, modify the ENTRYPOINT statement by CMD passing its name as the value of the E_USER environment variable, generate the image again and check the output. New Dockerfile:
+```Dockerfile
+FROM alpine:3.19.0
+ENV E_USER=amigo
+ENTRYPOINT [ "sh", "-c", "echo Hola, soy Juan, te doy la bienvenida $E_USER" ]
+CMD ["$E_USER"]
+```
+
 
 ### Example 10 - Others
 Create a Dockerfile with the following content:
