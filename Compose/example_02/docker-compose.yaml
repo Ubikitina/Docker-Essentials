@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: my-root-pwd
+      MYSQL_DATABASE: dbtest
+      MYSQL_USER: my-user
+      MYSQL_PASSWORD: my-sqlpwd
+    # ports: # This is not necessary, we do not need to expose the ports for mysql, because adminer will communicate with it.
+    #  - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer-container
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:

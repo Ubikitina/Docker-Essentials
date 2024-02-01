@@ -7,7 +7,9 @@ Table of contents
   - [Docker Compose File Structure](#docker-compose-file-structure)
     - [File Example](#file-example)
     - [Services Section: Common Directives](#services-section-common-directives)
-      - [Example: docker-compose.yaml with the above sections](#example-docker-composeyaml-with-the-above-sections)
+  - [Docker Compose Examples](#docker-compose-examples)
+    - [Example 1 - Basics with nginx, php and mysql](#example-1---basics-with-nginx-php-and-mysql)
+    - [Example 2 - Replicate mysql and adminer example](#example-2---replicate-mysql-and-adminer-example)
 
 
 In this section, we will explore how to define and run multiple applications in containers easily and quickly using Docker Compose.
@@ -191,7 +193,13 @@ In the services section of a Docker Compose file, various directives are commonl
 
 Docker Compose operates within a directory structure. You can have multiple groups of containers on a server—create a directory for each container and a `docker-compose.yaml` file for each directory. This modular approach allows for flexibility and organization in managing containerized applications.
 
-#### Example: docker-compose.yaml with the above sections
+
+
+
+
+## Docker Compose Examples
+### Example 1 - Basics with nginx, php and mysql
+
 ```yaml
 version: "3.9"
 services:
@@ -227,6 +235,112 @@ services:
       - ./mysql:/var/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root_password
-
 ```
 
+**Create and Start Containers:**
+```bash
+$ docker-compose up -d # Start the containers in the background.
+$ docker-compose up nginx # Start the nginx and mysql containers.
+$ docker-compose up mysql # Start only the mysql container.
+```
+**Start Created Containers**
+```bash
+$ docker-compose start [SERVICE…] # Start the specified service containers.
+```
+
+**Display Containers:**
+```bash
+$ docker-compose ps -a # Show containers (including stopped ones).
+```
+```
+Output:
+PS C:\...\Docker-Essentials\Compose\example_01> docker-compose ps -a
+NAME         IMAGE           COMMAND                  SERVICE   CREATED          STATUS          PORTS
+test_mysql   mysql:5.7.36    "docker-entrypoint.s…"   mysql     11 minutes ago   Up 11 minutes   0.0.0.0:3306->3306/tcp, 33060/tcp
+test_nginx   nginx:1.23.3    "/docker-entrypoint.…"   nginx     11 minutes ago   Created         0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+test_php     php:8.1.0-fpm   "docker-php-entrypoi…"   php       11 minutes ago   Up 11 minutes   9000/tcp
+```
+    
+
+**Enter a Container:**
+To access a container, for example, the php container, execute the following command:
+```bash
+$ docker exec -ti test_php bash
+```
+
+**Stop Services:**
+To stop active services while preserving containers, volumes, networks, and any modifications, run the following command:
+```bash
+$ docker-compose stop
+```
+
+
+**Destroy Everything:**
+If you want to discard changes and destroy all resources, execute:
+```bash
+$ docker-compose down
+```
+
+### Example 2 - Replicate mysql and adminer example
+We will do it with permanent storage. Our docker-compose.yaml is:
+```yaml
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: my-root-pwd
+      MYSQL_DATABASE: dbtest
+      MYSQL_USER: my-user
+      MYSQL_PASSWORD: my-sqlpwd
+    # ports: # This is not necessary, we do not need to expose the ports for mysql, because adminer will communicate with it.
+    #  - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer-container
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
+```
+
+Create and start containers and display them:
+```bash
+$ docker-compose up -d
+$ docker-compose ps -a
+```
+The status of the containers is "Up".
+
+Access the website http://localhost:8080/, and log in by indicating the following connection parameters in Adminer:
+- **Server:** `mysql` (this is the service name in the `docker-compose.yaml`)
+- **Username:** `my-user`
+- **Password:** `my-sqlpwd`
+- **Database:** `dbtest`
+
+Create a test table in Adminer. Add test values.
+
+Stop Services and destroy everything:
+```bash
+$ docker-compose stop
+$ docker-compose down
+```
+
+Now recreate and restart containers:
+```bash
+$ docker-compose up -d
+```
+Access the website http://localhost:8080/, log in and check if the created table and values still remain. We see that this content is still there because in the yaml we have specified to save the information in a volume.
+
+We can view the volume created by doing 
+```bash
+$ docker volume ls
+$ docker volume inspect <volume-name>
+```
