@@ -1,0 +1,5 @@
+# Ignore Docker folder
+Docker/
+
+# Ignore Kubernetes folder
+Kubernetes/

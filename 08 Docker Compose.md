@@ -10,6 +10,9 @@ Table of contents
   - [Docker Compose Examples](#docker-compose-examples)
     - [Example 1 - Basics with nginx, php and mysql](#example-1---basics-with-nginx-php-and-mysql)
     - [Example 2 - Replicate mysql and adminer example](#example-2---replicate-mysql-and-adminer-example)
+    - [Example 3 - Use the docker extension in Visual Studio Code to create docker-compose.yaml file](#example-3---use-the-docker-extension-in-visual-studio-code-to-create-docker-composeyaml-file)
+    - [Example 4 - Resource reserve and limits](#example-4---resource-reserve-and-limits)
+    - [Example 5 - Docker Compose for Scaling](#example-5---docker-compose-for-scaling)
 
 
 In this section, we will explore how to define and run multiple applications in containers easily and quickly using Docker Compose.
@@ -343,4 +346,210 @@ We can view the volume created by doing
 ```bash
 $ docker volume ls
 $ docker volume inspect <volume-name>
+```
+
+### Example 3 - Use the docker extension in Visual Studio Code to create docker-compose.yaml file
+The goal of the following practice is for students to independently construct a solution using `docker-compose.yaml` based on the `dockerfile-multistage` practice (see Docker multistage in "04 Dockerfile.md").
+
+1. **Generate `docker-compose.yaml` File:**
+   - Use the Docker extension.
+   - Press (Ctrl+Shift+P) and search for "Docker: Add Docker Files to Workspace..."
+   - From the list of Application Platforms, select ".NET: ASP.NET Core."
+   - Choose "Linux" from the list of Operating System options.
+   - Enter the desired deployment port value.
+   - When asked to include Docker Compose files, respond with "yes."
+
+2. **Review and Execute:**
+   - Examine the generated `docker-compose.yaml` file.
+   - Execute the docker-compose.yaml file.
+
+By following these steps, students will practice creating a Docker Compose solution independently, enhancing their skills with Docker and Docker Compose.
+
+### Example 4 - Resource reserve and limits
+To restrict the resources of a container, utilize the following `docker-compose.yaml` configuration:
+
+```yaml
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 512M
+        reservations:
+          cpus: "1"
+          memory: 256M
+```
+
+This configuration ensures that the specified container, in this case, "nginx," has resource limitations applied as follows:
+
+- **CPU Limits:**
+  - Maximum CPUs allocated: 2
+
+- **Memory Limits:**
+  - Maximum memory allocated: 512MB
+
+- **CPU Reservations:**
+  - Minimum CPUs guaranteed: 1
+
+- **Memory Reservations:**
+  - Minimum memory guaranteed: 256MB
+
+By incorporating these settings into the `docker-compose.yaml` file, we can effectively control and allocate resources for the specified container, providing resource limitations and reservations.
+
+### Example 5 - Docker Compose for Scaling
+
+Utilize the following `docker-compose.yaml` configuration for scaling:
+
+**docker-compose.yaml:**
+```yaml
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: pspdfkit
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pspdfkit
+
+  pspdfkit:
+    image: "pspdfkit/pspdfkit:latest"
+    environment:
+      PGUSER: pspdfkit
+      PGPASSWORD: password
+      PGDATABASE: pspdfkit
+      PGHOST: db
+      PGPORT: 5432
+      DASHBOARD_USERNAME: dashboard
+      DASHBOARD_PASSWORD: secret
+      SECRET_KEY_BASE: secret-key-base
+      JWT_PUBLIC_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALd41vG5rMzG26hhVxE65kzWC+bYQ94t
+        OxsSxIQZMOc1GY8ubuqu2iku5/5isaFfG44e+VAe+YIdVeQY7cUkaaUCAwEAAQ==
+        -----END PUBLIC KEY-----
+      JWT_ALGORITHM: RS256
+      API_AUTH_TOKEN: secret
+      ASSET_STORAGE_BACKEND: built-in
+    depends_on:
+      - db
+    expose:
+      - "5000"
+
+  nginx:
+    image: nginx:latest
+    container_name: scale_pr_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - pspdfkit
+    ports:
+      - "4000:4000"
+```
+Explanation:
+
+1. **Version and Services:**
+   - The `version: "3"` indicates the Docker Compose file version being used.
+
+2. **Database Service (`db`):**
+   - Defines a PostgreSQL service (`db`) with the specified environment variables.
+
+3. **Main Application Service (`pspdfkit`):**
+   - Defines the main application service (`pspdfkit`) using the `pspdfkit/pspdfkit:latest` image.
+   - Sets necessary environment variables for the application.
+   - Specifies dependencies on the `db` service using `depends_on`.
+   - Exposes port `5000` within the service.
+
+4. **Nginx Service (`nginx`):**
+   - Defines an Nginx service using the `nginx:latest` image.
+   - Names the container as `scale_pr_nginx`.
+   - Mounts the local `nginx.conf` file into the container's `/etc/nginx/nginx.conf`.
+   - Specifies dependencies on the `pspdfkit` service using `depends_on`.
+   - Maps port `4000` on the host to port `4000` on the container.
+
+**nginx.conf:**
+```nginx
+user nginx;
+events {
+  worker_connections 1000;
+}
+
+http {
+  server {
+    listen 4000;
+    location / {
+      proxy_pass http://pspdfkit:5000;
+    }
+  }
+}
+```
+
+Explanation:
+
+1. **User and Events:**
+   - Sets Nginx to run as the `nginx` user with a limit of `worker_connections` to 1000.
+
+2. **HTTP Server Configuration:**
+   - Configures an HTTP server that listens on port `4000`.
+
+3. **Proxy Configuration:**
+   - The `location /` block specifies how Nginx should handle requests to the root URL (`/`).
+   - The `proxy_pass http://pspdfkit:5000;` line instructs Nginx to forward requests to the `pspdfkit` service running on the internal Docker network at port `5000`. Nginx is used as a reverse proxy to forward requests from the external port (`4000`) to the internal port (`5000`) where the `pspdfkit` service is running.
+
+Summary:
+
+- The Docker Compose configuration defines three services: a PostgreSQL database (`db`), the main application (`pspdfkit`), and an Nginx server (`nginx`).
+- The Nginx server acts as a reverse proxy, forwarding requests to the main application service.
+- Ports are mapped to allow external access to the Nginx server on port `4000`.
+- Dependencies are defined to ensure services start in the correct order (`pspdfkit` depends on `db`, and `nginx` depends on `pspdfkit`).
+
+This setup allows us to scale the application easily and provides a simple example of using Nginx as a reverse proxy in a Dockerized environment. We can adjust the configurations based on our specific application requirements.
+
+Using these files, perform the following exercise:
+
+1. Create the files in a folder named `pspdkit-nginx`:
+
+```bash
+# Execute the following command to create the project
+$ docker-compose up
+```
+
+2. List the deployed containers:
+
+```bash
+$ docker-compose ps
+```
+
+The result looks like this:
+```bash
+NAME                       IMAGE                      COMMAND                  SERVICE    CREATED         STATUS         PORTS
+pspdkit-nginx-db-1         postgres:latest            "docker-entrypoint.s…"   db         3 minutes ago   Up 2 minutes   5432/tcp
+pspdkit-nginx-pspdfkit-1   pspdfkit/pspdfkit:latest   "/usr/bin/dumb-init …"   pspdfkit   3 minutes ago   Up 2 minutes   5000/tcp
+scale_pr_nginx             nginx:latest               "/docker-entrypoint.…"   nginx      3 minutes ago   Up 2 minutes   80/tcp, 0.0.0.0:4000->4000/tcp
+```
+
+3. Navigate to the URL [http://localhost:4000/dashboard](http://localhost:4000/dashboard)
+
+4. Scale the `pspdfkit` service to two containers:
+
+```bash
+$ docker-compose up --scale pspdfkit=2
+```
+
+5. List the deployed containers and navigate back to the dashboard:
+
+```bash
+$ docker-compose ps
+```
+The result looks like this:
+```bash
+NAME                       IMAGE                      COMMAND                  SERVICE    CREATED          STATUS          PORTS
+pspdkit-nginx-db-1         postgres:latest            "docker-entrypoint.s…"   db         7 minutes ago    Up 7 minutes    5432/tcp
+pspdkit-nginx-pspdfkit-1   pspdfkit/pspdfkit:latest   "/usr/bin/dumb-init …"   pspdfkit   7 minutes ago    Up 7 minutes    5000/tcp
+pspdkit-nginx-pspdfkit-2   pspdfkit/pspdfkit:latest   "/usr/bin/dumb-init …"   pspdfkit   32 seconds ago   Up 29 seconds   5000/tcp
+scale_pr_nginx             nginx:latest               "/docker-entrypoint.…"   nginx      7 minutes ago    Up 7 minutes    80/tcp, 0.0.0.0:4000->4000/tcp
 ```
