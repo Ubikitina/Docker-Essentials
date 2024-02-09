@@ -98,9 +98,16 @@ $ docker run --rm hello
 ### Example 2 - Git
 Creates an image with Git.
 ```Dockerfile
-FROM alpine:3.1 9 0
+FROM alpine:3.19.0
 RUN apk update
 RUN apk add git
+```
+
+Create an image with a file in its structure.
+```Dockerfile
+FROM alpine:3.19.0
+RUN apk update
+ADD http://www.vlsitechnology.org/pharosc_8.4.tar.gz .
 ```
 
 Build with the app_git:v1 tag, run, enter and verify the existence of the file.
@@ -109,14 +116,6 @@ $ docker run --rm app_git:v1 ls
 ```
 
 ### Example 3 - Copy
-Create an image with a file in its structure.
-```Dockerfile
-FROM alpine:3.1 9 0
-RUN apk update
-ADD http://www.vlsitechnology.org/pharosc_8.4.tar.gz .
-```
-
-### Example 4 - Entrypoint
 Create an index.html file with the content "Welcome to the test lab".
 
 Create a dockerfile with the following content:
@@ -130,6 +129,25 @@ Build with the app_copy:v1 tag, execute and navigate to the html page:
 ```bash
 $ docker run --rm -d -p 80:80 app_copy:v1
 ```
+
+
+### Example 4 - Entrypoint
+Create a Dockerfile with the following content:
+
+```Dockerfile
+FROM alpine:3.19.0
+LABEL maintainer="datahack"
+ENTRYPOINT ["/bin/echo", "Hello, your ENTRYPOINT in EXEC format!"]
+```
+
+Build and run with the tag `app_entrypoint:v1` and check the result.
+
+Then, execute the following command:
+
+```bash
+docker run --entrypoint "/bin/echo" app_entrypoint:v1 "Hello, from the console!"
+```
+
 
 ### Example 5 - Workdir
 Dockerfile:
