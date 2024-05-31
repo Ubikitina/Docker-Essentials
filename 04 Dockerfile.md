@@ -196,7 +196,7 @@ CMD ["flask", "run", "--host=0.0.0.0"]
 
 Build the image with the app_python:v1 tag. Then execute the image specifying the port.
 ```bash
-$ docker build t app_python:v1 .
+$ docker build -t app_python:v1 .
 $ docker run rm p 5000:5000 d app_python:v1
 ```
 
